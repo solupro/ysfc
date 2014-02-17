@@ -1,0 +1,158 @@
+{% load djclub_filter %}
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<title>{% block title %}首页{% endblock %} - 煙逝凡塵</title>
+		<link rel=stylesheet type=text/css href="/static/style/feather.css">
+		<link rel="shortcut icon" href="/static/favicon.ico" />
+		<script type="text/javascript" src="http://code.jquery.com/jquery-1.7.2.min.js"></script>
+		<script src="/static/js/feather.js" type="text/javascript"></script>
+		<script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+		{% block script %}{% endblock %}
+	</head>
+	<body>
+		<div id=topbar class=navbar style="box-shadow: 0 5px 10px rgba(0,0,0,0.6);">
+			<div class=navbar-inner>
+				<div class=container>
+					{% include "_logo2.html" %}
+					<div class=nav-collapse>
+						<ul class="nav nav-pills">
+							{% block usersactive %}
+							<li>
+							{% endblock %}
+								<a href="{% url users %}">会员</a>
+							</li>
+							{% block bankactive %}
+							<li>
+							{% endblock %}
+								<a href="/bank/">时间规划局</a>
+							</li>
+						</ul>
+						<ul class="nav nav-pills pull-right">
+						{% if not request.session.user %}
+							<li>
+							{% block invite %}
+								<a href="{% url register %}">注册</a>
+							{% endblock %}
+							</li>
+							<li>
+								<a href="{% url login %}">登录</a>
+							</li>
+						{% else %}
+							{% if request.session.user.id|get_notify_count != 0 %}
+								<li class="notifications unread">
+							{% else %}
+								<li class=notifications>
+							{% endif %}
+									<a href="{% url notification %}">
+										<span class=count>{{ request.session.user.id|get_notify_count }}</span>
+									</a>
+								</li>
+								<li>
+									<a href="/member/{{ request.session.user.name }}/">个人中心</a>
+								</li>
+								<li>
+									<a href="/settings/">设置</a>
+								</li>
+								<li>
+									<a href="{% url logout %}" data-method="delete" rel="nofollow">登出</a>
+								</li>
+						{% endif %}
+					</div>
+				</div>
+			</div>
+		</div>
+		<div id=main>
+			<div class=container>
+				{% block bread %}
+				<div class=row>
+					<div class=span12>
+						<ul class=breadcrumb>
+							<li>
+								<a href="/">煙逝凡塵</a>
+								<span class=divider>/</span>
+							</li>
+							{% block breadcrumb %}<li class=active>首页</li>{% endblock %}
+						</ul>
+					</div>
+				</div>
+				{% endblock %}
+				{% block main %}
+				<div class=row>
+
+					{% if messages %}
+						{% for message in messages %}
+						<p class="alert alert-block alert-success" style="margin-left: 30px;">{{ message }}</p>
+						{% endfor %}
+					{% endif %}
+
+					{% block body %}{% endblock %}
+					{% block sidebar %}
+						<div id="sidebar" class="span3">
+							{% if request.session.user.id %}
+								<section class="profile box">
+									<div class=clearfix>
+										<div class=avatar>
+											<a href="/member/{{ request.session.user.name }}/">
+												<img src="{{ request.session.user.id|get_user_info:'email'|gravatar }}">
+											</a>
+										</div>
+										<div class=info>
+											<h3>{{ request.session.user.name }}</h3>
+											<p style="color: #ccc;">
+												{{request.session.user.id|get_user_info:'description'}}
+											</p>
+										</div>
+									</div>
+									{% if request.session.user.id|get_user_info:'timeswitch' == 1 %}
+										<hr>
+										<a href="/times">
+										<div class=balance_area style="font-size: 24px; line-height: 24px;">
+											<b>{{ request.session.user.id|get_user_hour }} : {{ request.session.user.id|get_user_minute }}</b>
+										</div>
+										</a>
+									{% endif %}
+								</section>
+							{% else %}
+								<section class=box>
+									<header> 加入讨论？ </header>
+									{% block invite2 %}
+										<a class="btn success" href="{% url register %}">注册</a>
+									{% endblock %}
+									或者
+									<a class="btn" href="{% url login %}">登录</a>
+								</section>
+							{% endif %}
+							{% block sidebarin %}{% endblock %}
+							<section class=box>
+								<header>感谢</header>
+								<a href="http://www.python.org">
+									<img src="/static/img/python.png">
+								</a>
+								<a href="https://www.djangoproject.com/">
+									<img src="/static/img/site_django.jpg">
+								</a>
+							</section>
+						</div>
+					{% endblock %}
+				</div>
+				{% endblock %}
+			</div>
+		</div>
+		<footer>
+			<div class=container>
+				<div class=pull-left>
+					<p class=copyright> &copy; 煙逝凡塵 社区. </p>
+					<p style="color: #3d3d3d;text-shadow: 0px -1px #bbb,0 1px #fff; color:#e3e1e1;">Lovingly made by <b>Monroe</b>. Modify by <b>solu</b>.</p>
+				</div>
+				<div class=pull-right>
+					<p>
+						<a href="#top">Back to top</a>
+					</p>
+				</div>
+			</div>
+		</footer>
+	</body>
+</html>

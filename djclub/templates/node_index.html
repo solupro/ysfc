@@ -1,0 +1,79 @@
+{% extends "layout.html" %}
+{% block title %}{{ node.name }}{% endblock %}
+{% load djclub_filter %}
+{% block breadcrumb %}<li class=active>{{ node.name }}</li>{% endblock %}
+{% block sidebarin %}
+	{% if request.session.user.id %}
+		<section class=box>
+			<a class="btn btn-primary" href="{% url topicadd %}">创建主题</a>
+		</section>
+	{% endif %}
+	<section class=box>
+		<header>
+		{{ node.name }}
+		</header>
+		{{ node.description|mentionfilter }}
+		{% if request.session.user.id == 1 %}
+			<hr>
+			<a class=btn href="{% url nodedit node.name %}" style="margin-top: -15px;">节点编辑</a>
+		{% endif %}
+	</section>
+
+{% endblock %}
+{% block body %}
+	<div id=mainbar class=span9>
+		{% if page_obj.count %}
+			<section id=topics class="box no-padding">
+				<table class=item-list>
+					<tbody>
+						{% for topic in page_obj %}
+							<tr>
+								<td class=avatar>
+									<a href="/member/{{ topic.author.name }}/">
+										<img src="{{ topic.author.email|gravatar:'48' }}">
+									</a>
+								</td>
+								<td>
+									<h3>
+										<a href="{% url topicview topic.id %}">{{ topic.title }}</a>
+									</h3>
+									<div class=info>
+										<span class=tags>
+										</span>
+										<span class=author>
+											<a href="/member/{{ topic.author.name }}/">{{ topic.author.name }}</a>
+										</span>
+										<span class=time>
+											创建于 {{ topic.date|format_datetime }}
+											{% if topic.replys.count %}
+											，<a href="/member/{{ topic.id|get_topic_last_reply_id|get_reply_author_id|get_user_info:'name' }}/">
+											{{ topic.id|get_topic_last_reply_id|get_reply_author_id|get_user_info:'name' }}
+											</a>
+												回复于 {{ topic.id|get_topic_last_reply|get_reply_date|format_datetime }}
+											{% endif %}
+										</span>
+									</div>
+								</td>
+								<td class="reply-count last">
+									<a href="">{{ topic.reply_set.count }}</a>
+								</td>
+							{% if request.session.user.id == 1 %}
+								<td><p align="right"><a href="">删除</a></p>
+							{% endif %}
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</section>
+		{% else %}
+			<section class=box>
+			暂无相关主题，来
+			{% if request.session.user %}
+				<a class="btn btn-primary" href="{% url topicadd %}">创建第一个主题</a>
+			{% else %}
+				创建第一个主题
+			{% endif %}吧^_^
+			</section>
+		{% endif %}
+	</div>
+{% endblock %}

@@ -1,0 +1,23 @@
+{% extends "layout.html" %}
+{% block title %}编辑回复 > {{ topic.title }}{% endblock %}
+{% load djclub_filter %}
+{% block body %}
+<style type="text/css">
+#id_content {height: 200px;}
+</style>
+	{% if request.session.user.id %}
+		<div id=mainbar class=span9>
+			<section id=editor class=box>
+				<form action="{% url replyedit reply.id %}" method="post" class="new_topic">
+					{% csrf_token %}
+					<div class=full-input-wrap>
+						{{ form.content }}
+					</div>
+					<div class=control-group>
+						<input class="btn primary" type=submit value=更新 name=commit>
+					</div>
+				</form>
+			</section>
+		</div>
+	{% endif %}
+{% endblock %}

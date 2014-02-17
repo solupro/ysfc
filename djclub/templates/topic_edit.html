@@ -1,0 +1,44 @@
+{% extends "layout.html" %}
+{% load djclub_filter %}
+{% block title %}主题编辑 › {{ topic.node.name }}{% endblock %}
+{% block sidebarin %}{% endblock %}
+{% block breadcrumb %}<li><a href="/node/{{ topic.node.site }}">{{ topic.node.name }}</a>{% endblock %}
+{% block body %}
+<style type="text/css">
+#id_title {width:450px;}
+#id_text {width: 450px;}
+</style>
+	{% if request.session.user %}
+		<div id=mainbar class=span9>
+			<section class=box>
+				<form action="{% url topicedit topic.id %}" method=post class=new_topic>
+					{% csrf_token %}
+					<legend>主题编辑</legend>
+					<div class=form-horizontal>
+						<div class=control-group>
+							<label class=control-label>标题：</label>
+							<div class=controls>
+								{{ form.title }}
+							</div>
+						</div>
+						<div class=control-group>
+							<label class=control-label>正文：</label>
+							<div class=controls>
+								{{ form.text }}
+							</div>
+						</div>
+						<div class=control-group>
+							<label class=control-label>节点：</label>
+							<div class=controls>
+								{{ form.nodename }}
+							</div>
+						</div>
+						<div class=form-actions>
+							<input class="btn btn-primary" type=submit value=果断提交 name=commit>
+						</div>
+					</div>
+				</form>
+			</section>
+		</div>
+	{% endif %}
+{% endblock %}

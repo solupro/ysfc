@@ -1,0 +1,154 @@
+{% extends "layout.html" %}
+{% block title %}时间账单{% endblock %}
+{% load djclub_filter %}
+{% block sidebarin %}
+<section class=box>
+<a href="{% url favorites %}">主题收藏</a>
+<a href="{% url times %}">时间账单</a>
+</section>
+{% endblock %}
+{% block bread %}{% endblock %}
+{% block body %}
+	<div id=mainbar class=span9>
+		<section id=profile class=box>
+			<div class=profile-wrap>
+				<div class=profile-inner>
+					<div class=avatar>
+						<img src="{{ request.session.user.email|gravatar }}">
+					</div>
+					<div class=info>
+						<h1>
+							{{ request.session.user.name }}
+						</h1>
+						{% if request.session.user.description %}
+							<p>{{ request.session.user.description }}</p>
+						{% endif %}
+						{% if request.session.user.website %}
+							<a rel="external nofollow" href="{{ request.session.user.website }}">{{ request.session.user.website }}</a>
+						{% endif %}
+						<hr>
+						<div class=balance_area style="font-size: 24px; line-height: 24px;">
+							<b>{{ request.session.user.id|get_user_hour }} : {{ request.session.user.id|get_user_minute }}</b>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		{% if page_obj.number %}
+			<section id=topics class="box no-padding">
+				<table class=item-list>
+					<tbody>
+						<tr>
+							<td width=150>日期</td>
+							<td width=120>类型</td>
+							<td width=90>时间</td>
+							<td width=90>剩余</td>
+							<td width=auto>描述</td>
+						</tr>
+						{% for bill in page_obj.object_list %}
+							<tr id=bill-{{ bill.id }}>
+								<td width=150>
+									<small>{{ bill.date|format_datetime }}</small>
+								</td>
+								<td width=120>
+									{% if bill.type == 1 %}
+										注册-贷款
+									{% endif %}
+									{% if bill.type == 2 %}
+										发表主题-消费
+									{% endif %}
+									{% if bill.type == 3 %}
+										发表评论-消费
+									{% endif %}
+									{% if bill.type == 4 %}
+										发出感谢-消费
+									{% endif %}
+									{% if bill.type == 5 %}
+										收到评论-收益
+									{% endif %}
+									{% if bill.type == 6 %}
+										收到感谢-收益
+									{% endif %}
+									{% if bill.type == 7 %}
+										受到邀请-贷款
+									{% endif %}
+									{% if bill.type == 8 %}
+										发出邀请-收益
+									{% endif %}
+								</td>
+								<td width=90>
+									{% if bill.type == 2 or bill.type == 3 or bill.type == 4 %}
+										<div class=balance_area style="color: red;">-
+									{% else %}
+										<div class=balance_area style="color: green;">+
+									{% endif %}
+											{{ bill.time }}
+										</span>
+									</div>
+								</td>
+								<td width=90>
+									{% if not bill.balance %}
+										数据未记录
+									{% else %}
+										<div class=balance_area>
+											{{ bill.balance|get_balance_hour }} : {{ bill.balance|get_balance_minute }}
+										</div>
+									{% endif %}
+								</td>
+								<td width=auto>
+									{% if bill.type == 1 %}
+										注册贷款
+									{% endif %}
+									{% if bill.type == 2 %}
+										{% if not bill.topic %}
+											数据未记录
+										{% else %}
+											发表主题 > <a href="{% url topicview bill.topic_id %}">{{ bill.topic.title }}</a>
+										{% endif %}
+									{% endif %}
+									{% if bill.type == 3 %}
+										{% if not bill.reply %}
+											数据未记录
+										{% else %}
+											发表评论 > <a href="{% url topicview bill.reply.topic.id %}">{{ bill.reply.topic.title }}</a>
+										{% endif %}
+									{% endif %}
+									{% if bill.type == 4 %}
+										{% if not bill.reply or not bill.user_id %}
+											数据未记录
+										{% else %}
+											感谢<a href="/member/{{ bill.user_id|get_user_info:'name' }}">{{ bill.user_id|get_user_info:'name' }}</a>的评论 > <a href="{% url topicview bill.reply.topic.id %}">{{ bill.reply.topic.title }}</a>
+										{% endif %}
+									{% endif %}
+									{% if bill.type == 5 %}
+										{% if not bill.reply or not bill.user_id %}
+											数据未记录
+										{% else %}
+											收到<a href="/member/{{ bill.user_id|get_user_info:'name' }}">{{ bill.user_id|get_user_info:'name' }}</a>的评论 > <a href="{% url topicview bill.reply.topic.id %}">{{ bill.reply.topic.title }}</a>
+										{% endif %}
+									{% endif %}
+									{% if bill.type == 6 %}
+										{% if not bill.reply or not bill.user_id %}
+											数据未记录
+										{% else %}
+											收到<a href="/member/{{ bill.user_id|get_user_info:'name' }}">{{ bill.user_id|get_user_info:'name' }}</a>的感谢 > <a href="{% url topicview bill.reply.topic.id %}">{{ bill.reply.topic.title }}</a>
+										{% endif %}
+									{% endif %}
+									{% if bill.type == 7 %}
+											受<a href="/member/{{ bill.user_id|get_user_info:'name' }}">{{ bill.user_id|get_user_info:'name' }}</a>邀请注册
+									{% endif %}
+									{% if bill.type == 8 %}
+												邀请<a href="/member/{{ bill.user_id|get_user_info:'name' }}">{{ bill.user_id|get_user_info:'name' }}</a>注册
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</section>
+		{% endif %}
+		{% if page_obj.paginator.num_pages != 1 %}
+			{% include "_page.html" %}
+		{% endif %}
+	</div>
+{% endblock %}

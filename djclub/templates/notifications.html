@@ -1,0 +1,100 @@
+{% extends "layout.html" %}
+{% block title %}回复提醒{% endblock %}
+{% block breadcrumb %}回复提醒{% endblock %}
+{% load djclub_filter %}
+{% load markup %}
+{% block sidebarin %}
+<!--
+	<section class=box>
+		<form class=button_to method=post data-remote=true action="">
+		</form>
+	</section>
+-->
+{% endblock %}
+{% block body %}
+	<div id=mainbar class=span9>
+		<section id=notifications class="box no-padding">
+			<table class=item-list>
+				<tbody>
+				{% if unreads.count %}
+					{% for unread in unreads %}
+						<tr id=notification-{{ unread.reply.id }}>
+							<td class=avatar>
+								<a href="/member/{{ unread.reply.author.name }}/">
+									<img src="{{ unread.reply.author.email|gravatar:48 }}">
+								</a>
+							</td>
+							{% if request.session.user.id == unread.reply.topic.author.id and unread.type == 1 %}
+								<td>
+									<h3>
+										<a href="/member/{{ unread.reply.author.name }}/">{{ unread.reply.author.name }}</a>
+										回复了你的主题
+										<a href="{% url topicview unread.reply.topic.id %}">{{ unread.reply.topic.title }}</a>
+										{{ unread.reply.date|format_datetime }}
+										<span class="new label label-warning">New</span>
+									</h3>
+									<p>{{ unread.reply.text|mentionfilter|markdown|safe }}</p>
+								</td>
+							{% else %}
+								<td>
+									<h3>
+										<a href="/member/{{ unread.reply.author.name }}/">{{ unread.reply.author.name }}</a>
+										在主题
+										<a href="{% url topicview unread.reply.topic.id %}">{{ unread.reply.topic.title }}</a>
+										提及了你
+										{{ unread.reply.date|format_datetime }}
+										<span class="new label label-warning">New</span>
+									</h3>
+									<p>{{ unread.reply.text|mentionfilter|markdown|safe }}</p>
+								</td>
+							{% endif %}
+							<td class=last>
+								<a class=close rel=nofollow data-remote=true data-method=delete href="{% url notify_del unread.id %}">×</a>
+							</td>
+						</tr>
+					{% endfor %}
+				{% endif %}
+					{% for readed in page_obj.object_list %}
+						{% if readed.reply %}
+							<tr id=notification-{{ readed.reply.id }}>
+								<td class=avatar>
+									<a href="">
+										<img src="{{ readed.reply.author.email|gravatar:48 }}">
+									</a>
+								</td>
+								{% if request.session.user.id == readed.reply.topic.author.id and readed.type == 2 %}
+									<td>
+										<h3>
+											<a href="/member/{{ readed.reply.author.name }}/">{{ readed.reply.author.name }}</a>
+											在主题
+											<a href="{% url topicview readed.reply.topic.id %}">{{ readed.reply.topic.title }}</a>
+											提及了你
+											{{ readed.reply.date|format_datetime }}
+										</h3>
+										<p>{{ readed.reply.text|mentionfilter|markdown|safe }}</p>
+									</td>
+								{% else %}
+									<td>
+										<h3>
+											<a href="/member/{{ readed.reply.author.name }}/">{{ readed.reply.author.name }}</a>
+											回复了你的主题
+											<a href="{% url topicview readed.reply.topic.id %}">{{ readed.reply.topic.title }}</a>
+											{{ readed.reply.date|format_datetime }}
+										</h3>
+										<p>{{ readed.reply.text|mentionfilter|markdown|safe }}</p>
+									</td>
+								{% endif %}
+								<td class=last>
+									<a class=close rel=nofollow data-remote=true data-method=delete href="{% url notify_del readed.id %}">×</a>
+								</td>
+							</tr>
+						{% endif %}
+					{% endfor %}
+				</tbody>
+			</table>
+		</section>
+		{% if page_obj.paginator.num_pages != 1 %}
+			{% include "_page.html" %}
+		{% endif %}
+	</div>
+{% endblock %}

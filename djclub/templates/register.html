@@ -1,0 +1,60 @@
+{% extends "layout.html" %}
+{% block title %}注册{% endblock %}
+{% block bread %}{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block body %}
+	<div class="span4 offset4">
+		<section id="signup-form" class=box>
+			<form id=new_user class=new_user novalidate=novalidate method=post data-validate=true action="{% url register %}" accept-charset=UTF-8>
+				{% csrf_token %}
+				<input type="hidden" name="inviter" value="{{ inviter }}" />
+				<fieldset>
+					<legend>注册</legend>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_name>用户名</label>
+						</div>
+						<div class=controls>
+							<div class=full-input-wrap>
+								{{ form.username }}
+							</div>
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_email>邮箱</label>
+						</div>
+						<div class=controls>
+							<div class=full-input-wrap>
+								{{ form.email }}
+							</div>
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_password>密码</label>
+						</div>
+						<div class=controls>
+							<div class=full-input-wrap>
+								{{ form.password1 }}
+							</div>
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_password_confirmation>密码确认</label>
+						</div>
+						<div class=controls>
+							<div class=full-input-wrap>
+								{{ form.password2 }}
+							</div>
+						</div>
+					</div>
+					<div class=form-actions>
+						<input class="btn primary" type=submit value=注册 tabindex=5 name=commit>
+						或者
+						<a href="{% url login %}">已经注册过？</a>
+					</div>
+				</fieldset>
+			</form>
+{% endblock %}

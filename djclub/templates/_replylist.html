@@ -1,0 +1,45 @@
+{% load djclub_filter %}
+{% load markup %}
+<section id=replies class="box no-padding">
+	<table class=item-list>
+		<tbody>
+		{% for reply in page_obj.object_list %}
+			<tr id="reply-{{ reply.id }}" class=reply>
+				<td class=avatar>
+					<img src="{{ reply.author.email|gravatar:48 }}">
+				</td>
+				<td>
+					<article>
+						<header class=clearbox>
+							<div class=left>
+								<a class=dark href="/member/{{ reply.author.name }}" style="font-size: 14px;">{{ reply.author.name }}</a>
+								<span class="gray little list_big">{{ reply.date|format_datetime }}</span>
+								{% if reply.thanks_set.all.count %}
+								<span class="thanked_area" >♥</span><span style="color: #ccc; font-weight: normal;">{{ reply.id|get_reply_thankers_count }}</span>
+								{% endif %}
+							</div>
+							<div class=right>
+								{% if request.session.user.id and request.session.user.id != reply.author.id %}
+									{% if reply.id not in request.session.user.thanks %}
+										<span class="thank_area" id="thank_area_{{ reply.id }}">
+											<a class=light onclick="thankReply({{ reply.id }});" title="感谢回复者" href="#thanks">♥</a>
+										</span>
+									{% else %}
+										<span class="thanked_area">♥</span>
+									{% endif %}
+								{% endif %}
+								{% if request.session.user.id == reply.author.id or request.session.user.id == 1 %}
+									<a class="light list" onclick="return confirm('你确定要删除此评论？');" href="{% url replydel reply.id %}">删除</a>
+									<a class="light list" href="{% url replyedit reply.id %}">编辑</a>
+								{% endif %}
+									<a class="at list" onclick="replyOne('{{ reply.author.name }}');" href="#;"><img align=absmiddle border=0 alt=Reply src="/static/img/reply.png"></a>
+							</div>
+						</header>
+						<p>{{ reply.text|mentionfilter|markdown }}</p>
+					</article>
+				</td>
+			</tr>
+		{% endfor %}
+		</tbody>
+	</table>
+</section>

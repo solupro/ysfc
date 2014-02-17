@@ -1,0 +1,45 @@
+{% extends "layout.html" %}
+{% block title %}创建主题 › {{ node.name }}{% endblock %}
+{% block sidebarin %}{% endblock %}
+{% load djclub_filter %}
+{% load markup %}
+{% block breadcrumb %}<li>创建主题{% endblock %}
+{% block body %}
+<style type="text/css">
+#id_title {width:450px;}
+#id_text {width: 450px;}
+</style>
+	{% if request.session.user %}
+		<div id=mainbar class=span9>
+			<section class=box>
+				<form action="{% url topicadd %}" method="post" class="new_topic">
+					{% csrf_token %}
+					<legend>创建主题<span class="gray little" style="float: right;"><a href="javascript:void(function(){var%20d%20=%20document,a%20=%20'setAttribute',s%20=%20d.createElement('script');s[a]('tyle','text/javascript');s[a]('src','http://weibotuchuang.sinaapp.com/bookmark.js');d.head.appendChild(s);})();">Add Image</a></span></legend>
+					<div class=form-horizontal>
+						<div class=control-group>
+							<label class=control-label>标题：</label>
+							<div class=controls>
+								{{ form.title }}
+							</div>
+						</div>
+						<div class=control-group>
+							<label class=control-label>正文：</label>
+							<div class=controls>
+								{{ form.text }}
+							</div>
+						</div>
+						<div class=control-group>
+							<label class=control-label>节点：</label>
+							<div class=controls>
+								{{ form.nodename }}
+							</div>
+						</div>
+						<div class=form-actions>
+							<input class="btn btn-primary" type=submit value=果断提交 name=commit>
+						</div>
+					</div>
+				</form>
+			</section>
+		</div>
+	{% endif %}
+{% endblock %}

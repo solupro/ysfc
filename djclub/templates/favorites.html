@@ -1,0 +1,70 @@
+{% extends "layout.html" %}
+{% block title %}主题收藏{% endblock %}
+{% block breadcrumb %}<li class=active>主题收藏</li>{% endblock %}
+{% load djclub_filter %}
+{% block sidebarin %}
+<section class=box>
+	<a href="{% url favorites %}">主题收藏</a>
+	<a href="{% url times %}">时间账单</a>
+</section>
+{% endblock %}
+{% block body %}
+	<div id=mainbar class=span9>
+		{% if page_obj.number %}
+			<section id=topics class="box no-padding">
+				<table class=item-list>
+					<tbody>
+						{% for fav in page_obj.object_list %}
+							<tr id=topic-{{ topic.id }}>
+								<td class=avatar>
+									<a href="/member/{{ fav.user.name }}/">
+										<img src="{{ fav.user.email|gravatar:48 }}">
+									</a>
+								</td>
+								<td>
+									<h3>
+										<a href="{% url topicview fav.topic.id %}">{{ fav.topic.title }}</a>
+									</h3>
+									<div class=info>
+										<span class=tags>
+											<a href="/node/{{ fav.topic.node.site }}">{{ fav.topic.node.name }}</a>
+										</span>
+										<span class=author>
+											<a href="/member/{{ fav.user.name }}/">{{fav.user.name }}</a>
+										</span>
+										<span class=time>
+											创建于 {{ fav.topic.date|format_datetime }}
+											{% if fav.topic.replys.count %}
+											，<a href="/member/{{ fav.topic.id|get_topic_last_reply_id|get_reply_author_id|get_user_info:'name' }}">{{ fav.topic.id|get_topic_last_reply_id|get_reply_author_id|get_user_info:'name' }}</a>
+												回复于 {{ fav.topic.id|get_reply_author_id|get_reply_date|format_datetime }}
+											{% endif %}
+										</span>
+									</div>
+								</td>
+								<td class="reply-count last">
+									{% if request.session.user %}
+										{% if fav.topic.id|get_topic_reply_count %}
+											<a href="{% url topicview fav.topic.id %}" class=read>{{ fav.topic.id|get_topic_reply_count }}</a>
+										{% else %}
+											<a href="{% url topicview fav.topic.id %}">{{ fav.topic.id|get_topic_reply_count }}</a>
+										{% endif %}
+									{% else %}
+										<a href="{% url topicview fav.topic.id %}">{{ fav.topic.id|get_topic_reply_count }}</a>
+									{% endif %}
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</section>
+		{% else %}
+			<section class=box>
+				<p>暂时还没有收藏哦</p>
+			</section>
+		{% endif %}
+
+		{% if page_obj.paginator.num_pages != 1 %}
+			{% include "_page.html" %}
+		{% endif %}
+	</div>
+{% endblock %}

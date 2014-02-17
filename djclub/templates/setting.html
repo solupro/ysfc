@@ -1,0 +1,92 @@
+{% extends "layout.html" %}
+{% block title %}个人设置{% endblock %}
+{% block sitebar %}{% endblock %}
+{% block bread %}{% endblock %}
+{% load djclub_filter %}
+{% block body %}
+	<div id="mainbar" class="span9">
+		<section id="settings" class="box">
+			<header>
+				<h3>账户设置</h3>
+			</header>
+			<form accept-charset="UTF-8" action="" class="edit_user" data-balidate="true" id="edit_user_{{ user.id }}" method="post" novalidate="novalidate">
+				{% csrf_token %} 
+				<fieldset>
+					<div class="control-group">
+						<div class="control-label">
+							<label for="user_name">用户名</label>
+						</div>
+						<div class="controls">
+							{{ form.username }}
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_email>邮箱</label>
+						</div>
+						<div class=controls>
+							{{ form.email }}
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_emailswitch>邮箱显示开关</label>
+						</div>
+						<div class=controls>
+							{{ form.emailswitch }}
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_timeswitch>时间显示开关</label>
+						</div>
+						<div class=controls>
+							{{ form.timeswitch }}
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_topswitch>是否参与排行</label>
+						</div>
+						<div class=controls>
+							{{ form.topswitch }}
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_email>个人主页</label>
+						</div>
+						<div class=controls>
+							{{ form.website }}
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_description>个人简介</label>
+						</div>
+						<div class=controls>
+							{{ form.description }}
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_city>城市</label>
+						</div>
+						<div class=controls>
+							{{ form.city }}
+						</div>
+					</div>
+					<div class=control-group>
+						<div class=control-label>
+							<label for=user_current_password>当前密码</label>
+						</div>
+						<div class=controls>
+							{{ form.password }}
+						</div>
+					</div>
+					<input class="btn primary" name=commit type=submit value=保存>
+				</fieldset>
+			</form>
+		</section>
+	</div>
+{% endblock %}

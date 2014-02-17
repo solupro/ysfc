@@ -1,0 +1,146 @@
+{% load djclub_filter %}
+<nav class=pagination>
+	<ul>
+		{% if page_obj.number > 4 %}
+			{% if page_obj.number|toadd:2 < page_obj.paginator.num_pages %}
+				{% if page_obj.has_previous %}
+					<li class=prev>
+						<a rel=prev href="?page={{ page_obj.previous_page_number }}">上一页</a>
+					</li>
+				{% endif %}
+				<li>
+					<a href="?page=1">1</a>
+				</li>
+				<li class=disabled>
+					<a href="#">...</a>
+				</li>
+				{% with page_obj.number|tosub:3 as x %}
+				{% with page_obj.number|toadd:2 as y %}
+				{% for i in x|myrange:y %}
+					{% if i|toadd:1 == page_obj.number %}
+						<li class=active>
+					{% else %}
+						<li>
+					{% endif %}
+							<a href="?page={{ i|toadd:1 }}">{{ i|toadd:1 }}</a>
+						</li>
+				{% endfor %}
+				{% endwith %}
+				{% endwith %}
+				<li class=disabled>
+					<a href="#">...</a>
+				</li>
+				<li>
+					<a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+				</li>
+				{% if page_obj.has_next %}
+					<li class=next>
+						<a rel=next href="?page={{ page_obj.next_page_number }}">下一页</a>
+					</li>
+				{% endif %}
+			{% else %}
+				{% if page_obj.has_previous %}
+					<li class=prev>
+						<a rel=prev href="?page={{ page_obj.previous_page_number }}">上一页</a>
+					</li>
+				{% endif %}
+				<li>
+					<a href="?page=1">1</a>
+				</li>
+				<li class=disabled>
+					<a href="#">...</a>
+				</li>
+				{% with page_obj.number|tosub:3 as x %}
+				{% with page_obj.paginator.num_pages as y %}
+				{% for i in x|myrange:y %}
+					{% if i|toadd:1 == page_obj.number %}
+						<li class=active>
+					{% else %}
+						<li>
+					{% endif %}
+							<a href="?page={{ i|toadd:1 }}">{{ i|toadd:1 }}</a>
+						</li>
+				{% endfor %}
+				{% endwith %}
+				{% endwith %}
+				{% if page_obj.has_next %}
+					<li class=next>
+						<a rel=next href="?page={{ page_obj.next_page_number }}">下一页</a>
+					</li>
+				{% endif %}
+			{% endif %}
+		{% else %}
+			{% if page_obj.paginator.num_pages <= 4 %}
+				{% for i in 0|myrange:page_obj.paginator.num_pages %}
+					{% if i|toadd:1 == page_obj.number %}
+						<li class=active>
+					{% else %}
+						<li>
+					{% endif %}
+							<a href="?page={{ i|toadd:1 }}">{{ i|toadd:1 }}</a>
+						</li>
+				{% endfor %}
+			{% else %}
+				{% if page_obj.number|toadd:2 < page_obj.paginator.num_pages %}
+					{% if page_obj.has_previous %}
+						<li class=prev>
+							<a rel=prev href="?page={{ page_obj.previous_page_number }}">上一页</a>
+						</li>
+					{% endif %}
+					{% with page_obj.number|add:2 as x%}
+					{% for i in 0|myrange:x %}
+						{% if i|toadd:1 == page_obj.number %}
+							<li class=active>
+						{% else %}
+							<li>
+						{% endif %}
+								<a href="?page={{ i|toadd:1 }}">{{ i|toadd:1 }}</a>
+							</li>
+					{% endfor %}
+					{% endwith %}
+							<li class=disabled>
+								<a href="#">...</a>
+							</li>
+							<li>
+								<a href="?page={{ page_obj.paginator.num_pages }}">{{ page_obj.paginator.num_pages }}</a>
+							</li>
+							{% if page_obj.has_next %}
+								<li class=next>
+									<a rel=next href="?page={{ page_obj.next_page_number }}">下一页</a>
+								</li>
+							{% endif %}
+				{% else %}
+					{% if page_obj.has_previous %}
+						<li class=prev>
+							<a rel=prev href="?page={{ page_obj.previous_page_number }}">上一页</a>
+						</li>
+					{% endif %}
+					<li>
+						<a href="?page=1">1</a>
+					</li>
+					<li class=disabled>
+						<a href="#">...</a>
+					</li>
+					{% with page_obj.number|tosub:2 as x %}
+					{% with page_obj.paginator.num_pages as y %}
+					{% for i in x|myrange:y %}
+						{% if i|toadd:1 == page_obj.number %}
+							<li class=active>
+						{% else %}
+							<li>
+						{% endif %}
+								<a href="?page={{ i|toadd:1 }}">{{ i|toadd:1 }}</a>
+							</li>
+					{% endfor %}
+					{% endwith %}
+					{% endwith %}
+					{% if page_obj.has_next %}
+						<li class=next>
+							<a rel=next href="?page={{ page_obj.next_page_number }}">下一页</a>
+						</li>
+					{% endif %}
+				{% endif %}
+			{% endif %}
+		{% endif %}
+	</ul>
+</nav>

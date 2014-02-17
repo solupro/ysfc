@@ -1,0 +1,64 @@
+{% extends "layout.html" %}
+{% block title %}加班明细{% endblock %}
+{% load djclub_filter %}
+{% block sidebarin %}
+<section class=box>
+<a href="{% url favorites %}">主题收藏</a>
+<a href="{% url times %}">时间账单</a>
+</section>
+{% endblock %}
+{% block bread %}{% endblock %}
+{% block body %}
+	<div id=mainbar class=span9>
+		<section id=profile class=box>
+			<div class=profile-wrap>
+				<div class=profile-inner>
+					<div class=avatar>
+						<img src="{{ request.session.user.email|gravatar }}">
+					</div>
+					<div class=info>
+						<h1>
+							{{ request.session.user.name }}
+						</h1>
+						{% if request.session.user.description %}
+							<p>{{ request.session.user.description }}</p>
+						{% endif %}
+						{% if request.session.user.website %}
+							<a rel="external nofollow" href="{{ request.session.user.website }}">{{ request.session.user.website }}</a>
+						{% endif %}
+						<hr>
+						<div class=balance_area style="font-size: 24px; line-height: 24px;">
+							<b>{{ request.session.user.id|get_user_hour }} : {{ request.session.user.id|get_user_minute }}</b>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		{% if page_obj.number %}
+			<section id=topics class="box no-padding">
+				<table class=item-list>
+					<tbody>
+						<tr>
+							<td width=150>日期</td>
+							<td width=250>备注</td>
+						</tr>
+						{% for ot in page_obj.object_list %}
+							<tr id="bill-{{ ot.id }}">
+								<td width="150">
+									<small>{{ ot.record_time|format_datetime2 }}</small>
+								</td>
+								<td width="250">
+									{{ ot.remark }}
+								</td>
+				
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</section>
+		{% endif %}
+		{% if page_obj.paginator.num_pages != 1 %}
+			{% include "_page.html" %}
+		{% endif %}
+	</div>
+{% endblock %}

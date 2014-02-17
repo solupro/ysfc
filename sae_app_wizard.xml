@@ -1,0 +1,10 @@
+<appwizard><introduction><name></name><author>烟逝凡尘</author><icon></icon><homepage></homepage><description><![CDATA[烟逝凡尘，django写的小应用]]></description></introduction><platform><services><service></service><service>Mysql</service></services><appconfig><tpl><![CDATA[
+name: <<appname>>
+version: <<version>>
+version: 1
+libraries:
+- name: django
+  version: "1.4"
+...
+
+]]></tpl></appconfig></platform><code><initScript>index.php</initScript></code></appwizard>

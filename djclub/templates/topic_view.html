@@ -1,0 +1,126 @@
+{% extends "layout.html" %}
+{% load markup %}
+{% load djclub_filter %}
+{% block script %}
+	<script type="text/javascript">
+		$(function(){
+			$('tr.reply').hover(
+				function(){
+					$(this).find('span.thank_area').fadeIn(300);
+				},
+				function(){
+					$(this).find('span.thank_area').fadeOut(300,function(){$(this).stop(true);});
+				});
+			$('tr.reply').dblclick(
+				function(){
+				$(this).children('td').children('article').children('.clearbox').children('.right').children('.at').click();
+			});
+		});
+	</script>
+{% endblock %}
+{% block title %}{{ topic.title }}{% endblock %}
+{% block breadcrumb %}<li><a href="/node/{{ topic.node.site }}">{{ topic.node.name }}</a></li>{% endblock %}
+{% block invite %}
+	<a href="{% url register topic.author.name %}">注册</a>
+{% endblock %}
+{% block invite2 %}
+	<a class="btn success" href="{% url register topic.author.name %}">注册</a>
+{% endblock %}
+{% block sidebarin %}
+	<section class=box>
+		<header> 相关话题 </header>
+		<div class=content>
+			<ul class=nice-list>
+				{% for liketopic in liketopics %}
+					{% if liketopic.id != topic.id %}
+						<li>
+							<a href="{% url topicview liketopic.id %}">{{ liketopic.title }}</a>
+						</li>
+					{% endif %}
+				{% endfor %}
+			</ul>
+		</div>
+	</section>
+{% endblock %}
+{% block body %}
+	<div id=mainbar class=span9>
+		<section id=topic class=box>
+			<article id="{{ topic.id }}">
+				<header>
+					<table>
+						<tbody>
+							<tr>
+								<td>
+									<h1>{{ topic.title }}</h1>
+									<span class=tags>
+										<a href="/node/{{ topic.node.site }}">{{ topic.node.name }}</a>
+									</span>
+									<span class="author list">
+										<a class=dark href="/member/{{ topic.author.name }}">{{ topic.author.name }}</a>
+									</span>
+									<span class="time gray little list">创建于 {{ topic.date|format_datetime }}</span>
+									{% if request.session.user.id == topic.author.id or request.session.user.id == 1 %}
+										<a class="light list_big" href="{% url topicedit topic.id %}">编辑</a>
+									{% endif %}
+									{% if topic.id not in request.session.user.votes %}
+										<a class="light list_big" href="{% url topicvote topic.id %}">举报</a>
+									{% else %}
+										<span class="gray list_big">已举报</span>
+									{% endif %}
+								</td>
+								<td class=avatar>
+									<a href="/member/{{ topic.author.name }}">
+										<img src="{{ topic.author.email|gravatar:48 }}">
+									</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</header>
+				<p>{{ topic.text|mentionfilter|markdown|safe }}</p>
+				<footer>
+					<span class=marks_count>
+						{% if topic.id in request.session.user.favorites %}
+							<a class="btn disabled btn_primary" href="#;">已收藏</a>
+						{% else %}
+							<a id=fav class="btn btn_primary" onclick="fav({{ topic.id }});" href="#;"><show>收藏</show></a>
+						{% endif %}
+					</span>
+					{% if session.user_id %}
+						<span class=easy_reply style="float: right;">
+							<a class="btn btn_primary" onclick="replyOne('{{ topic.author.name }}');" href="#;">快速回复</a>
+						</span>
+					{% endif %}
+				</footer>
+			</article>
+		</section>
+		{% include "_replylist.html" %}
+		<span id=replyend></span>
+		{% if page_obj.paginator.num_pages != 1 %}
+			{% include "_page.html" %}
+		{% endif %}
+		{% if request.session.user %}
+			<section id="editor" class=box>
+				<h4> 回复话题 </h4>
+				<span class="gray little" style="float: right;"><a href="javascript:void(function(){var%20d%20=%20document,a%20=%20'setAttribute',s%20=%20d.createElement('script');s[a]('tyle','text/javascript');s[a]('src','http://weibotuchuang.sinaapp.com/bookmark.js');d.head.appendChild(s);})();">Add Image</a></span>
+				<form id=new_reply class=new_reply method=post action="{% url replyadd topic.id %}">
+					{% csrf_token %}
+					<div class=control-group>
+						<div id=editor-button-bar style="position: absolute;top: -999em;">
+						</div>
+						<div class=full-input-wrap>
+							{{ form.content }}
+						</div>
+					</div>
+					<div class=control-group>
+						<input id=submit class="btn primary" type=submit value=提交 name=commit>
+						<span style="color: #ccc;"> ctrl+enter </span>
+					</div>
+				</form>
+			</section>
+		{% else %}
+			<section id=tishi class=box>
+			</section>
+		{% endif %}
+	</div>
+{% endblock %}

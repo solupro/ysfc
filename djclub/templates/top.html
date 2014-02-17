@@ -1,0 +1,61 @@
+{% extends "layout.html" %}
+{% block title %}排行榜{% endblock %}
+{% block sidebarin %}
+{% load djclub_filter %}
+<section class=box>
+<a href="{% url favorites %}">主题收藏</a>
+<a href="{% url times %}">时间账单</a>
+</section>
+{% endblock %}
+{% block breadcrumb %}
+	<li>
+		<a href="{% url users %}">会员</a>
+		<span class=divider>/</span>
+	</li>
+	<li class=active>
+		排行榜
+	</li>
+{% endblock %}
+{% block body %}
+	<div id=mainbar class=span9>
+		<p>只列举前20名会员</p>
+		{% if users %}
+			<section id=times class="box no-padding">
+				<table class=item-list>
+					<tbody>
+						{% for user in users %}
+							<tr id=top-{{ user.id }}>
+								<td style="vertical-align:middle; text-align:center; width:100px;">
+									<h1 style="color: #ccc;">{{ forloop.counter }}</h1>
+								</td>
+								<td class=avatar style="vertical-align: middle;padding: 10px;">
+									<a href="/member/{{ user.name }}/">
+										<img src="{{ user.email|gravatar:'64' }}">
+									</a>
+								</td>
+								<td class=info style="width: 350px; padding:10px;">
+									<h3>{{ user.name }}</h3>
+									{% if user.description %}
+										<p>{{ user.description }}</p>
+									{% endif %}
+									{% if user.website %}
+										<a rel="external nofollow" href="{{ user.website }}">{{ user.website }}</a>
+									{% endif %}
+								</td>
+								<td style="vertical-align: middle; text-align: center;">
+									<div class=balance_area style="font-size: 24px; line-height:24px;">
+										<b>{{ user.id|get_user_hour }} : {{ user.id|get_user_minute }}</b>
+									</div>
+								</td>
+							</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</section>
+		{% else %}
+			<section class=box>
+				Nobody
+			</section>
+		{% endif %}
+	</div>
+{% endblock %}

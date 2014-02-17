@@ -1,0 +1,118 @@
+{% extends "layout.html" %}
+{% block title %}时间规划局{% endblock %}
+{% block bankactive %}<li class=active>{% endblock %}
+{% block sidebar %}{% endblock %}
+{% block bread %}{% endblock %}
+{% load djclub_filter %}
+{% block main %}
+	<section id=timesystem class=box>
+		<table class=item-list>
+			<tbody>
+				<tr>
+					<p style="font-size: 48px; text-align: center; padding: 10px;text-shadow: 1px 1px 3px #000; color:#676767;">
+					时间规划局
+					</p>
+					<hr>
+				</tr>
+				<tr>
+					<div style="text-align: center;">
+						<div class=balance_area style="font-size: 68px; line-height: 68px;text-align: center;text-shadow: -1px -1px 3px #ffb69a,1px 1px 3px #922e09,-1px -1px #ffb69a,1px 1px #922e09; color:#e73f00;">
+							{{ bank.time|get_bank_time }}
+						</div>
+					</div>
+				</tr>
+			</tbody>
+		</table>
+	</section>
+	<section id=bills class="box no-padding">
+		<table class=item-list>
+			<tbody>
+				{% for bill in page_obj.object_list %}
+					<tr id=bill-{{ bill.id }}>
+						<td class=avatar>
+							<a href="/member/{{ bill.author.name }}/">
+								<img src="{{ bill.author.email|gravatar:'64' }}">
+							</a>
+						</td>
+						<td>
+							{% if bill.type == 1 %}
+								<h3>
+									用户注册
+								</h3>
+								<div class=info>
+									<span class=author>
+										<a href="/member/{{ bill.author.name }}/">{{ bill.author.name }}</a>
+									</span>
+									<span class=time>
+										注册于 {{ bill.date|format_datetime }},
+										贷款 <div class=balance_area>{{ default_time|get_bank_time }}</div>
+									</span>
+								</div>
+							{% endif %}
+							{% if bill.type == 2 %}
+								{% if not bill.topic %}
+									<h3>
+										用户发表主题（已删除）
+									</h3>
+									<div class=info>
+										<span class=author>
+											<a href="/member/{{ bill.author.name }}/">{{ bill.author.name }}</a>
+										</span>
+										<span class=time>
+											发表于 {{ bill.date|format_datetime }},
+											消费 <div class=balance_area>{{ topic_delete|get_bank_time }}</a>
+										</span>
+									</div>
+								{% else %}
+									<h3>
+										用户发表主题  <a href="">{{ bill.topic.title }}</a>
+									</h3>
+									<div class=info>
+										<span class=author>
+											<a href="/member/{{ bill.author.name }}/">{{ bill.author.name }}</a>
+										</span>
+										<span class=time>
+											发表于 {{ bill.date|format_datetime }},
+											消费 <div class=balance_area>{{ topic_create|get_bank_time }}</a>
+										</span>
+									</div>
+								{% endif %}
+							{% endif %}
+							{% if bill.type == 7 %}
+								<h3>
+									用户注册
+								</h3>
+								<div class=info>
+									<span class=author>
+										<a href="/member/{{ bill.author.name }}/">{{ bill.author.name }}</a>
+									</span>
+									<span class=time>
+										受<a href="/member/{{ bill.user_id|get_user_info:'name' }}/">{{ bill.user_id|get_user_info:'name' }}</a>邀请，注册于 {{ bill.date|format_datetime }},
+										贷款 <div class=balance_area>{{ inviter_time|get_bank_time }}</div>
+									</span>
+								</div>
+							{% endif %}
+							{% if bill.type == 8 %}
+								<h3>
+									邀请用户注册
+								</h3>
+								<div class=info>
+									<span class=author>
+										<a href="/member/{{ bill.author.name }}/">{{ bill.author.name }}</a>
+									</span>
+									<span class=time>
+										邀请<a href="/member/{{ bill.user_id|get_user_info:'name' }}/">{{ bill.user_id|get_user_info:'name' }}</a>注册,于 {{ bill.date|format_datetime }},
+										获得 <div class=balance_area>{{ gift_time|get_bank_time }}</div>
+									</span>
+								</div>
+							{% endif %}
+						</td>
+					</tr>
+				{% endfor %}
+			</tbody>
+		</table>
+	</section>
+	{% if page_obj.paginator.num_pages != 1 %}
+		{% include "_page.html" %}
+	{% endif %}
+{% endblock %}

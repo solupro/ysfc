@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}2013四月新番投票排行{% endblock %}
+{% block sitebar %}{% endblock %}
+{% block bread %}{% endblock %}
+{% load djclub_filter %}
+{% block body %}
+	<div id="mainbar" class="span9">
+		<section id="settings" class="box">
+			<header>
+				<h3>2013 四月新番投票排行</h3>
+			</header>
+			{% for k, v in kv %}
+				<p>{{ forloop.counter }}: 『{{ k }}』 总票数:{{ v.3 }},超期待:{{ v.0 }}({{ v.0|topercent:v.3 }}),一般期待::{{ v.1 }}({{ v.1|topercent:v.3 }}),没兴趣{{v.2}}({{ v.2|topercent:v.3 }})</p>
+			{% endfor %}
+		</section>
+	</div>
+{% endblock %}
